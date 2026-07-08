@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NutriFood.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e1c18a12a6991b6b88f1c9fe28d6f8d54cf26344")]
 [assembly: System.Reflection.AssemblyProductAttribute("NutriFood.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NutriFood.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
