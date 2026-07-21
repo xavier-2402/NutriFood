@@ -14,6 +14,12 @@
 
         public string Password { get; set; } = string.Empty;
 
+        public bool Active { get; set; } = true;
+
+        public DateTime CreaDate { get; set; } = DateTime.Now;
+
+        public DateTime ModDate { get; set; }
+
         public ICollection<Patient> Patients { get; set; }
             = new HashSet<Patient>();
     }

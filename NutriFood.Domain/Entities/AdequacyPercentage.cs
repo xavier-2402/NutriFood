@@ -1,6 +1,8 @@
-﻿namespace NutriFood.Domain.Entities
+﻿using NutriFood.Domain.Common.Base;
+
+namespace NutriFood.Domain.Entities
 {
-    public class AdequacyPercentage
+    public class AdequacyPercentage :AuditableEntity
     {
         public int Id { get; set; }
 
@@ -11,16 +13,6 @@
         public string? Description { get; set; }
 
         public int PatientId { get; set; }
-
-        public bool Active { get; set; } = true;
-
-        public DateTime CreaDate { get; set; }
-
-        public short? CreaUsr { get; set; }
-
-        public DateTime ModDate { get; set; }
-
-        public short? ModUsr { get; set; }
 
         public Patient? Patient { get; set; }
 

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NutriFood.Domain\NutriFood.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,8 @@
-﻿namespace NutriFood.Domain.Entities
+﻿using NutriFood.Domain.Common.Base;
+
+namespace NutriFood.Domain.Entities
 {
-    public class Recipe
+    public class Recipe : AuditableEntity
     {
         public int Id { get; set; }
 
@@ -11,16 +13,6 @@
         public string? Description { get; set; }
 
         public int FoodMenuId { get; set; }
-
-        public bool Active { get; set; } = true;
-
-        public short? CreaUsr { get; set; }
-
-        public DateTime CreaDate { get; set; }
-
-        public short? ModUsr { get; set; }
-
-        public DateTime ModDate { get; set; }
 
         public FoodMenu? FoodMenu { get; set; }
 

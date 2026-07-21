@@ -1,11 +1,30 @@
 {
   "version": 4,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "NutriFood.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/NutriFood.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NutriFood.Domain.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "NutriFood.Domain/1.0.0": {
+      "type": "project",
+      "path": "../NutriFood.Domain/NutriFood.Domain.csproj",
+      "msbuildProject": "../NutriFood.Domain/NutriFood.Domain.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "NutriFood.Domain >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Asus\\.nuget\\packages\\": {},
@@ -39,7 +58,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Asus\\Documents\\Projects\\NutriFood\\NutriFood.Domain\\NutriFood.Domain.csproj": {
+              "projectPath": "C:\\Users\\Asus\\Documents\\Projects\\NutriFood\\NutriFood.Domain\\NutriFood.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
