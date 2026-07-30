@@ -367,3 +367,5 @@ DocumentLayout.json
 # Ignore bin and obj folders across all projects
 **/bin/
 **/obj/
+bin/
+obj/

@@ -61,7 +61,7 @@ namespace NutriFood.Infrastructure.Persistence.Context
             modelBuilder.ApplyConfiguration(new MenuConfiguration());
             modelBuilder.ApplyConfiguration(new PatientConfiguration());
             modelBuilder.ApplyConfiguration(new RecipeConfiguration());
-            //modelBuilder.ApplyConfiguration(new RecipeFoodConfiguration());
+            modelBuilder.ApplyConfiguration(new RecipeFoodConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
 
