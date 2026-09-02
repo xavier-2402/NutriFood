@@ -27,6 +27,10 @@ namespace NutriFood.Infrastructure.Persistence.Configurations
             builder.Property(p => p.Description)
                 .HasColumnName("description");
 
+            builder.Property(p => p.Active)
+                .HasColumnName("active")
+                .HasDefaultValue(true);
+
             builder.Property(p => p.MeasureUnitId)
                 .HasColumnName("measure_unit_id");
 

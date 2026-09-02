@@ -1,6 +1,8 @@
-﻿namespace NutriFood.Domain.Common.Base
+﻿using NutriFood.Domain.Common.Interfaces;
+
+namespace NutriFood.Domain.Common.Base
 {
-    public abstract class AuditableEntity
+    public abstract class AuditableEntity : IAuditableEntity
     {
         public bool Active { get; set; } = true;
 

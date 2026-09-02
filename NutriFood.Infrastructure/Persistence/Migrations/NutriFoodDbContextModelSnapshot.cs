@@ -17,7 +17,7 @@ namespace NutriFood.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -209,6 +209,12 @@ namespace NutriFood.Infrastructure.Persistence.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -709,7 +715,7 @@ namespace NutriFood.Infrastructure.Persistence.Migrations
                         .HasColumnName("crea_date")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<short?>("CreaUsr")
+                    b.Property<short>("CreaUsr")
                         .HasColumnType("smallint")
                         .HasColumnName("crea_usr");
 
@@ -723,7 +729,7 @@ namespace NutriFood.Infrastructure.Persistence.Migrations
                         .HasColumnName("mod_date")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<short?>("ModUsr")
+                    b.Property<short>("ModUsr")
                         .HasColumnType("smallint")
                         .HasColumnName("mod_usr");
 

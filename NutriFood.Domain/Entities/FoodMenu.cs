@@ -1,8 +1,9 @@
 ﻿using NutriFood.Domain.Common.Base;
+using NutriFood.Domain.Common.Interfaces;
 
 namespace NutriFood.Domain.Entities
 {
-    public class FoodMenu: AuditableEntity
+    public class FoodMenu : AuditableEntity, IEntity<int>, ICodeEntity
     {
         public int Id { get; set; }
 
@@ -20,7 +21,6 @@ namespace NutriFood.Domain.Entities
 
         public MealTime? MealTime { get; set; }
 
-        public ICollection<Recipe> Recipes { get; set; }
-            = new HashSet<Recipe>();
+        public List<Recipe> Recipes { get; set; } = [];
     }
 }

@@ -1,8 +1,9 @@
 ﻿using NutriFood.Domain.Common.Base;
+using NutriFood.Domain.Common.Interfaces;
 
 namespace NutriFood.Domain.Entities
 {
-    public class Food : AuditableEntity
+    public class Food : AuditableEntity, IEntity<int>, ICodeEntity
     {
         public int Id { get; set; }
 
@@ -22,10 +23,8 @@ namespace NutriFood.Domain.Entities
 
         public FoodClassification? FoodClassification { get; set; }
 
-        public ICollection<FoodAttributeValue> FoodAttributeValues { get; set; }
-            = new HashSet<FoodAttributeValue>();
+        public List<FoodAttributeValue> FoodAttributeValues { get; set; } = [];
 
-        public ICollection<RecipeFood> RecipeFoods { get; set; }
-            = new HashSet<RecipeFood>();
+        public List<RecipeFood> RecipeFoods { get; set; } = [];
     }
 }

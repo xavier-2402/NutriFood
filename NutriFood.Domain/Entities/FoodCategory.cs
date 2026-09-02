@@ -1,6 +1,8 @@
-﻿namespace NutriFood.Domain.Entities
+﻿using NutriFood.Domain.Common.Interfaces;
+
+namespace NutriFood.Domain.Entities
 {
-    public class FoodCategory
+    public class FoodCategory :  IEntity<short>, ICodeEntity, IActivableEntity
     {
         public short Id { get; set; }
 
@@ -10,7 +12,6 @@
 
         public bool Active { get; set; } = true;
 
-        public ICollection<Food> Foods { get; set; }
-            = new HashSet<Food>();
+        public List<Food> Foods { get; set; } = [];
     }
 }

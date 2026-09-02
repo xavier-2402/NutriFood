@@ -29,6 +29,10 @@ namespace NutriFood.Infrastructure.Persistence.Configurations
                 .HasColumnName("active")
                 .HasDefaultValue(true);
 
+            builder.Property(mu => mu.Code)
+               .HasColumnName("code")
+               .IsRequired();
+
             builder.HasMany(mu => mu.FoodAttributes)
                 .WithOne(fa => fa.MeasureUnit)
                 .HasForeignKey(fa => fa.MeasureUnitId);

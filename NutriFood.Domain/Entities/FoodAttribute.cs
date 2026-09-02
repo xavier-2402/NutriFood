@@ -1,8 +1,11 @@
-﻿namespace NutriFood.Domain.Entities
+﻿using NutriFood.Domain.Common.Interfaces;
+
+namespace NutriFood.Domain.Entities
 {
-    public class FoodAttribute
+    public class FoodAttribute : IEntity<short>, ICodeEntity, IActivableEntity
     {
         public short Id { get; set; }
+
 
         public string Code { get; set; } = string.Empty;
 
@@ -12,12 +15,11 @@
 
         public short MeasureUnitId { get; set; }
 
+        public bool Active { get; set; } = true;
+
         public MeasureUnit? MeasureUnit { get; set; }
 
-        public ICollection<FoodAttributeValue> FoodAttributeValues { get; set; }
-            = new HashSet<FoodAttributeValue>();
-
-        public ICollection<AdequacyAttributeValue> AdequacyAttributeValues { get; set; }
-            = new HashSet<AdequacyAttributeValue>();
+        public List<FoodAttributeValue> FoodAttributeValues { get; set; } = [];
+        public List<AdequacyAttributeValue> AdequacyAttributeValues { get; set; } = [];
     }
 }

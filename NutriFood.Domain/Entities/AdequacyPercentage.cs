@@ -1,8 +1,9 @@
 ﻿using NutriFood.Domain.Common.Base;
+using NutriFood.Domain.Common.Interfaces;
 
 namespace NutriFood.Domain.Entities
 {
-    public class AdequacyPercentage :AuditableEntity
+    public class AdequacyPercentage : AuditableEntity, IEntity<int>, ICodeEntity
     {
         public int Id { get; set; }
 
@@ -16,10 +17,8 @@ namespace NutriFood.Domain.Entities
 
         public Patient? Patient { get; set; }
 
-        public ICollection<AdequacyAttributeValue> AdequacyAttributeValues { get; set; }
-            = new HashSet<AdequacyAttributeValue>();
+        public List<AdequacyAttributeValue> AdequacyAttributeValues { get; set; } = [];
 
-        public ICollection<MealPlan> MealPlans { get; set; }
-            = new HashSet<MealPlan>();
+        public List<MealPlan> MealPlans { get; set; } = [];
     }
 }

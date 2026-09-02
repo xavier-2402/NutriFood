@@ -2,7 +2,7 @@
 
 namespace NutriFood.Domain.Entities
 {
-    public class FoodAttributeValue :AuditableEntity
+    public class FoodAttributeValue : AuditableEntity
     {
         public int FoodId { get; set; }
 

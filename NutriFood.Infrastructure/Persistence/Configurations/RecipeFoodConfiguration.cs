@@ -9,6 +9,8 @@ namespace NutriFood.Infrastructure.Persistence.Configurations
     {
         public override void Configure(EntityTypeBuilder<RecipeFood> builder)
         {
+            base.Configure(builder);
+
             builder.ToTable("recipe_foods");
 
             builder.HasKey(recipeFood => new { recipeFood.RecipeId, recipeFood.FoodId });

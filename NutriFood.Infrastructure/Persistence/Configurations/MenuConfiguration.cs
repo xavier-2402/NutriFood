@@ -16,6 +16,10 @@ namespace NutriFood.Infrastructure.Persistence.Configurations
                 .HasColumnName("id")
                 .ValueGeneratedOnAdd();
 
+            builder.Property(m => m.Code)
+                .HasColumnName("code")
+                .IsRequired();
+
             builder.Property(m => m.Name)
                 .HasColumnName("name")
                 .IsRequired();

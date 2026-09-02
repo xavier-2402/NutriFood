@@ -1,6 +1,8 @@
-﻿namespace NutriFood.Domain.Entities
+﻿using NutriFood.Domain.Common.Interfaces;
+
+namespace NutriFood.Domain.Entities
 {
-    public class User
+    public class User : IEntity<short>, ICodeEntity, IActivableEntity
     {
         public short Id { get; set; }
 
@@ -20,7 +22,6 @@
 
         public DateTime ModDate { get; set; }
 
-        public ICollection<Patient> Patients { get; set; }
-            = new HashSet<Patient>();
+        public List<Patient> Patients { get; set; } = [];
     }
 }

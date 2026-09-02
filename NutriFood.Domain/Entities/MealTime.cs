@@ -1,6 +1,8 @@
-﻿namespace NutriFood.Domain.Entities
+﻿using NutriFood.Domain.Common.Interfaces;
+
+namespace NutriFood.Domain.Entities
 {
-    public class MealTime
+    public class MealTime : IEntity<short>, ICodeEntity, IActivableEntity
     {
         public short Id { get; set; }
 
@@ -10,7 +12,6 @@
 
         public bool Active { get; set; } = true;
 
-        public ICollection<FoodMenu> FoodMenus { get; set; }
-            = new HashSet<FoodMenu>();
+        public List<FoodMenu> FoodMenus { get; set; } = [];
     }
 }
