@@ -14,18 +14,19 @@ public class ReadOnlyService<TEntity, TId> : IReadOnlyService<TEntity, TId>
         Repository = repository;
     }
 
-    public virtual Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)
-        => Repository.GetByIdAsync(id, cancellationToken);
-
     public virtual Task<TEntity?> GetByIdAsync(TId id, bool includeInactive, CancellationToken cancellationToken)
         => Repository.GetByIdAsync(id, includeInactive, cancellationToken);
 
     public virtual Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken)
         => Repository.GetAllAsync(cancellationToken);
 
-    public virtual Task<IReadOnlyList<TEntity>> GetAllAsync(bool includeInactive, CancellationToken cancellationToken)
-        => Repository.GetAllAsync(includeInactive, cancellationToken);
 
     public virtual Task<IReadOnlyList<TEntity>> GetAllActiveAsync(CancellationToken cancellationToken)
         => Repository.GetAllActiveAsync(cancellationToken);
+
+    public virtual Task<TEntity?> GetByCodeAsync(string code, CancellationToken cancellationToken)
+        => Repository.GetByCodeAsync(code, cancellationToken);
+
+    public virtual Task<TEntity?> GetActiveByCodeAsync(string code, CancellationToken cancellationToken)
+        => Repository.GetActiveByCodeAsync(code, cancellationToken);
 }

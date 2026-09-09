@@ -21,11 +21,9 @@ public abstract class CrudControllerBase<TEntity, TId, TRequestCreate, TRequestU
     protected abstract TResponse Map(TEntity entity);
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery(Name = "include_inactive")] bool includeInactive, CancellationToken ct)
+    public async Task<IActionResult> GetAll(CancellationToken ct)
     {
-        var entities = includeInactive
-            ? await _service.GetAllAsync(includeInactive: true, ct)
-            : await _service.GetAllActiveAsync(ct);
+        var entities = await _service.GetAllAsync(ct);
         return Ok(entities.Select(Map).ToList());
     }
 
@@ -37,11 +35,16 @@ public abstract class CrudControllerBase<TEntity, TId, TRequestCreate, TRequestU
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(TId id, [FromQuery(Name = "include_inactive")] bool includeInactive, CancellationToken ct)
+    public async Task<IActionResult> GetById(TId id, CancellationToken ct)
     {
-        var entity = includeInactive
-            ? await _service.GetByIdAsync(id, includeInactive: true, ct)
-            : await _service.GetByIdAsync(id, ct);
+        var entity = await _service.GetByIdAsync(id, false, ct);
+        return entity is null ? NotFound() : Ok(Map(entity));
+    }
+
+    [HttpGet("{code}")]
+    public async Task<IActionResult> GetByCode(string code, CancellationToken ct)
+    {
+        var entity = await _service.GetByCodeAsync(code, ct);
         return entity is null ? NotFound() : Ok(Map(entity));
     }
 
