@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NutriFood.Api.Filters;
+using NutriFood.Api.Middleware;
 using NutriFood.Application.Services.Abstractions;
 using NutriFood.Application.Services.Implementations;
 using NutriFood.Domain.Repositories;
@@ -56,6 +57,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthorization();
 
