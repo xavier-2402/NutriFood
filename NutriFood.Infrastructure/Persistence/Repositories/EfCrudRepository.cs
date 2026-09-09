@@ -29,19 +29,11 @@ public class EfCrudRepository<TEntity, TId> : ICrudRepository<TEntity, TId>
         return entity;
     }
 
-    public Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken) => GetByIdAsync(id, false, cancellationToken);
 
     public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         var query = _set.AsNoTracking();
         return await query
-            .ToListAsync(cancellationToken);
-    }
-
-    public async Task<IReadOnlyList<TEntity>> GetAllAsync(bool includeInactive, CancellationToken cancellationToken)
-    {
-        var query = _set.AsNoTracking();
-        return await (includeInactive ? query : query.Where(entity => entity.Active))
             .ToListAsync(cancellationToken);
     }
 

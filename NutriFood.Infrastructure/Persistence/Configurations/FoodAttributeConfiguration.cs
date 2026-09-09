@@ -8,7 +8,7 @@ namespace NutriFood.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<FoodAttribute> builder)
         {
-            builder.ToTable("FoodAttributes");
+            builder.ToTable("food_attributes");
 
             builder.HasKey(p => p.Id);
 
