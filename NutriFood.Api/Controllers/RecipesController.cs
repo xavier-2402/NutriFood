@@ -1,20 +1,54 @@
-using NutriFood.Api.Controllers.Bases;
+using Microsoft.AspNetCore.Mvc;
 using NutriFood.Application.Contracts;
-using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
-using NutriFood.Domain.Entities;
 
 namespace NutriFood.Api.Controllers;
 
-public sealed class RecipesController : CrudControllerBase<Recipe, int, RecipeCreateRequest, RecipeUpdateRequest, RecipeResponse>
+[ApiController]
+[Route("api/[controller]")]
+public sealed class RecipesController : ControllerBase
 {
-    public RecipesController(IRecipeService service) : base(service)
+    private readonly IRecipeService _service;
+
+    public RecipesController(IRecipeService service)
     {
+        _service = service;
     }
 
-    protected override Recipe ToEntity(RecipeCreateRequest request) => RecipeMapper.ToEntity(request);
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken ct)
+        => Ok(await _service.GetAllAsync(ct));
 
-    protected override Recipe ToEntity(RecipeUpdateRequest request, Recipe existing) => RecipeMapper.ToEntity(request, existing);
+    [HttpGet("active")]
+    public async Task<IActionResult> GetAllActive(CancellationToken ct)
+        => Ok(await _service.GetAllActiveAsync(ct));
 
-    protected override RecipeResponse Map(Recipe entity) => RecipeMapper.Map(entity);
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken ct)
+    {
+        var response = await _service.GetByIdAsync(id, false, ct);
+        return response is null ? NotFound() : Ok(response);
+    }
+
+    [HttpGet("code/{code}")]
+    public async Task<IActionResult> GetByCode(string code, CancellationToken ct)
+    {
+        var response = await _service.GetByCodeAsync(code, ct);
+        return response is null ? NotFound() : Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(RecipeCreateRequest request, CancellationToken ct)
+        => StatusCode(StatusCodes.Status201Created, await _service.CreateAsync(request, ct));
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, RecipeUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+    {
+        var updated = await _service.UpdateAsync(id, request, ct);
+        return updated is null ? NotFound() : Ok(updated);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+        => await _service.DeleteAsync(id, userId, ct) ? NoContent() : NotFound();
 }

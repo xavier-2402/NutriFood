@@ -1,16 +1,38 @@
-using NutriFood.Api.Controllers.Bases;
-using NutriFood.Application.Contracts;
-using NutriFood.Application.Mappers;
+using Microsoft.AspNetCore.Mvc;
 using NutriFood.Application.Services.Abstractions;
-using NutriFood.Domain.Entities;
 
 namespace NutriFood.Api.Controllers;
 
-public sealed class MealTimesController : ReadOnlyControllerBase<MealTime, short, MealTimeResponse>
+[ApiController]
+[Route("api/[controller]")]
+public sealed class MealTimesController : ControllerBase
 {
-    public MealTimesController(IReadOnlyService<MealTime, short> service) : base(service)
+    private readonly IMealTimeService _service;
+
+    public MealTimesController(IMealTimeService service)
     {
+        _service = service;
     }
 
-    protected override MealTimeResponse Map(MealTime entity) => MealTimeMapper.Map(entity);
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken ct)
+        => Ok(await _service.GetAllAsync(ct));
+
+    [HttpGet("active")]
+    public async Task<IActionResult> GetAllActive(CancellationToken ct)
+        => Ok(await _service.GetAllActiveAsync(ct));
+
+    [HttpGet("id/{id}")]
+    public async Task<IActionResult> GetById(short id, CancellationToken ct)
+    {
+        var response = await _service.GetByIdAsync(id, false, ct);
+        return response is null ? NotFound() : Ok(response);
+    }
+
+    [HttpGet("code/{code}")]
+    public async Task<IActionResult> GetByCode(string code, CancellationToken ct)
+    {
+        var response = await _service.GetByCodeAsync(code, ct);
+        return response is null ? NotFound() : Ok(response);
+    }
 }

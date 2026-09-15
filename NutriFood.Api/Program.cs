@@ -30,8 +30,6 @@ builder.Services.AddScoped<IRecipeFoodRepository, RecipeFoodRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped(typeof(ICrudRepository<,>), typeof(EfCrudRepository<,>));
-builder.Services.AddScoped(typeof(IReadOnlyService<,>), typeof(ReadOnlyService<,>));
-builder.Services.AddScoped(typeof(ICrudService<,>), typeof(CrudService<,>));
 
 builder.Services.AddScoped<IAdequacyAttributeValueService, AdequacyAttributeValueService>();
 builder.Services.AddScoped<IAdequacyPercentageService, AdequacyPercentageService>();
@@ -43,6 +41,13 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IRecipeFoodService, RecipeFoodService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IMeasureUnitService, MeasureUnitService>();
+builder.Services.AddScoped<IMealTimeService, MealTimeService>();
+builder.Services.AddScoped<IFoodClassificationService, FoodClassificationService>();
+builder.Services.AddScoped<IFoodCategoryService, FoodCategoryService>();
+builder.Services.AddScoped<IFoodAttributeService, FoodAttributeService>();
 
 builder.Services.AddOpenApi();
 

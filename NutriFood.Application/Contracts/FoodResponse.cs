@@ -6,6 +6,6 @@ public sealed record FoodResponse(
     string Name,
     string? Description,
     short FoodCategoryId,
-    short FoodClassificationId,
+    short? FoodClassificationId,
     string? ImageUrl,
     bool Active);

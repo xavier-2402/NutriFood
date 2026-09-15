@@ -8,14 +8,15 @@ namespace NutriFood.Infrastructure.Persistence.Repositories;
 public class EfCrudRepository<TEntity, TId> : ICrudRepository<TEntity, TId>
     where TEntity : class, IEntity<TId>, IActivableEntity, ICodeEntity
 {
+    protected NutriFoodDbContext Context { get; }
+    private readonly DbSet<TEntity> _set;
+
     public EfCrudRepository(NutriFoodDbContext context)
     {
         Context = context;
         _set = context.Set<TEntity>();
     }
 
-    protected NutriFoodDbContext Context { get; }
-    private readonly DbSet<TEntity> _set;
 
     public async Task<TEntity?> GetByIdAsync(TId id, bool includeInactive, CancellationToken cancellationToken)
     {

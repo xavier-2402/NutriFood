@@ -1,20 +1,62 @@
-using NutriFood.Api.Controllers.Bases;
+using Microsoft.AspNetCore.Mvc;
 using NutriFood.Application.Contracts;
-using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
-using NutriFood.Domain.Entities;
 
 namespace NutriFood.Api.Controllers;
 
-public sealed class FoodsController : CrudControllerBase<Food, int, FoodCreateRequest, FoodUpdateRequest, FoodResponse>
+[ApiController]
+[Route("api/[controller]")]
+public sealed class FoodsController : ControllerBase
 {
-    public FoodsController(IFoodService service) : base(service)
+    private readonly IFoodService _service;
+
+    public FoodsController(IFoodService service)
     {
+        _service = service;
     }
 
-    protected override Food ToEntity(FoodCreateRequest request) => FoodMapper.ToEntity(request);
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken ct)
+        => Ok(await _service.GetAllAsync(ct));
 
-    protected override Food ToEntity(FoodUpdateRequest request, Food existing) => FoodMapper.ToEntity(request, existing);
+    [HttpGet("active")]
+    public async Task<IActionResult> GetAllActive(CancellationToken ct)
+        => Ok(await _service.GetAllActiveAsync(ct));
 
-    protected override FoodResponse Map(Food entity) => FoodMapper.Map(entity);
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken ct)
+    {
+        var response = await _service.GetByIdAsync(id, false, ct);
+        return response is null ? NotFound() : Ok(response);
+    }
+
+    [HttpGet("code/{code}")]
+    public async Task<IActionResult> GetByCode(string code, CancellationToken ct)
+    {
+        var response = await _service.GetByCodeAsync(code, ct);
+        return response is null ? NotFound() : Ok(response);
+    }
+
+    [HttpGet("category/{categoryId}")]
+    public IActionResult GetByCategory(short categoryId)
+        => Ok(_service.GetByCategory(categoryId));
+
+    [HttpGet("classification/{classificationId}")]
+    public IActionResult GetByClassification(short classificationId)
+        => Ok(_service.GetByClassification(classificationId));
+
+    [HttpPost]
+    public async Task<IActionResult> Create(FoodCreateRequest request, CancellationToken ct)
+        => StatusCode(StatusCodes.Status201Created, await _service.CreateAsync(request, ct));
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, FoodUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+    {
+        var updated = await _service.UpdateAsync(id, request, ct);
+        return updated is null ? NotFound() : Ok(updated);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+        => await _service.DeleteAsync(id, userId, ct) ? NoContent() : NotFound();
 }
