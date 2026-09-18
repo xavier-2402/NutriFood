@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using FluentValidation;
 using NutriFood.Api.Contracts;
 
 namespace NutriFood.Api.Middleware;
@@ -21,12 +22,30 @@ public sealed class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
+        catch (ValidationException exception)
+        {
+            _logger.LogWarning(exception, "A validation error occurred while processing the request.");
+
+            await HandleValidationExceptionAsync(context, exception);
+        }
         catch (Exception exception)
         {
             _logger.LogError(exception, "An unhandled exception occurred while processing the request.");
 
             await HandleExceptionAsync(context);
         }
+    }
+
+    private static async Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
+    {
+        var statusCode = (int)HttpStatusCode.BadRequest;
+        var message = string.Join(" ", exception.Errors.Select(e => e.ErrorMessage));
+        var response = ResponseResult<object?>.Failure(statusCode, message);
+
+        context.Response.StatusCode = statusCode;
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
     }
 
     private static async Task HandleExceptionAsync(HttpContext context)

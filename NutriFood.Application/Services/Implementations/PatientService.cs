@@ -1,3 +1,5 @@
+using FluentValidation;
+using NutriFood.Application.Common;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
@@ -9,10 +11,12 @@ namespace NutriFood.Application.Services.Implementations;
 public sealed class PatientService : IPatientService
 {
     private readonly IPatientRepository _repository;
+    private readonly IValidator<PatientCreateRequest> _createValidator;
 
-    public PatientService(IPatientRepository repository)
+    public PatientService(IPatientRepository repository, IValidator<PatientCreateRequest> createValidator)
     {
         _repository = repository;
+        _createValidator = createValidator;
     }
 
     public async Task<PatientResponse?> GetByIdAsync(int id, bool includeInactive, CancellationToken cancellationToken)
@@ -47,7 +51,14 @@ public sealed class PatientService : IPatientService
 
     public async Task<PatientResponse> CreateAsync(PatientCreateRequest request, CancellationToken cancellationToken)
     {
+        var validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
         var entity = PatientMapper.ToEntity(request);
+        entity.Code = CodeGenerator.Generate();
         var created = await _repository.AddAsync(entity, cancellationToken);
         return PatientMapper.Map(created);
     }

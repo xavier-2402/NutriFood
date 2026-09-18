@@ -1,8 +1,10 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using NutriFood.Api.Filters;
 using NutriFood.Api.Middleware;
 using NutriFood.Application.Services.Abstractions;
 using NutriFood.Application.Services.Implementations;
+using NutriFood.Application.Validators;
 using NutriFood.Domain.Repositories;
 using NutriFood.Infrastructure.Persistence.Context;
 using NutriFood.Infrastructure.Persistence.Repositories;
@@ -14,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options => options.Filters.Add<ResponseResultFilter>());
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddValidatorsFromAssemblyContaining<PatientCreateRequestValidator>();
 
 builder.Services.AddDbContext<NutriFoodDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("NutriFoodDb")));
