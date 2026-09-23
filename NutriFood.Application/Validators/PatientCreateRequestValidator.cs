@@ -16,12 +16,17 @@ namespace NutriFood.Application.Validators
                 .NotEmpty()
                 .WithMessage("First name cannot be empty.")
                 .MaximumLength(100)
-                .WithMessage("First name must be maximum 100 characters.");
+                .WithMessage("First name must be maximum 100 characters.")
+                .Matches(@"^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$")
+                .WithMessage("First name must not contain special characters.");
 
 
             RuleFor(x => x.LastName)
                 .NotEmpty()
-                .MaximumLength(100);
+                .MaximumLength(100)
+                .WithMessage("Last name must be maximum 100 characters.")
+                .Matches(@"^[a-zA-ZñÑáéíóúÁÉÍÓÚüÜ\s]+$")
+                .WithMessage("Last name must not contain special characters.");
 
             RuleFor(x => x.DateOfBirth)
                 .LessThanOrEqualTo(DateTime.Today)

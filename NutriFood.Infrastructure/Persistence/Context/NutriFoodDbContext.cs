@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NutriFood.Domain.Common.Interfaces;
 using NutriFood.Domain.Entities;
 using NutriFood.Infrastructure.Persistence.Configurations;
 
@@ -63,6 +64,35 @@ namespace NutriFood.Infrastructure.Persistence.Context
             modelBuilder.ApplyConfiguration(new RecipeConfiguration());
             modelBuilder.ApplyConfiguration(new RecipeFoodConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditInformation();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyAuditInformation()
+        {
+            var now = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.Entity is not IAuditableEntity auditable)
+                {
+                    continue;
+                }
+
+                if (entry.State == EntityState.Added)
+                {
+                    auditable.CreaDate = now;
+                    auditable.ModDate = now;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    auditable.ModDate = now;
+                }
+            }
         }
 
     }

@@ -59,6 +59,9 @@ public sealed class PatientService : IPatientService
 
         var entity = PatientMapper.ToEntity(request);
         entity.Code = CodeGenerator.Generate();
+        entity.CreaUsr = 1;
+        entity.ModUsr = 1;
+        entity.UserId = 1;
         var created = await _repository.AddAsync(entity, cancellationToken);
         return PatientMapper.Map(created);
     }
