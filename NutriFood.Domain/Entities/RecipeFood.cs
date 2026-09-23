@@ -17,5 +17,7 @@ namespace NutriFood.Domain.Entities
         public Food? Food { get; set; }
 
         public MeasureUnit? MeasureUnit { get; set; }
+
+        public List<RecipeFoodAttributeValue> RecipeFoodAttributeValues { get; set; } = [];
     }
 }

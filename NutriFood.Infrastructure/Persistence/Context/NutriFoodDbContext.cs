@@ -41,6 +41,8 @@ namespace NutriFood.Infrastructure.Persistence.Context
 
         public DbSet<RecipeFood> RecipeFoods { get; set; }
 
+        public DbSet<RecipeFoodAttributeValue> RecipeFoodAttributeValues { get; set; }
+
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -62,6 +64,7 @@ namespace NutriFood.Infrastructure.Persistence.Context
             modelBuilder.ApplyConfiguration(new PatientConfiguration());
             modelBuilder.ApplyConfiguration(new RecipeConfiguration());
             modelBuilder.ApplyConfiguration(new RecipeFoodConfiguration());
+            modelBuilder.ApplyConfiguration(new RecipeFoodAttributeValueConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
 

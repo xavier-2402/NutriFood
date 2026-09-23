@@ -27,6 +27,7 @@ builder.Services.AddScoped<IMealPlanRepository, MealPlanRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IRecipeFoodRepository, RecipeFoodRepository>();
+builder.Services.AddScoped<IRecipeFoodAttributeValueRepository, RecipeFoodAttributeValueRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped(typeof(ICrudRepository<,>), typeof(EfCrudRepository<,>));
