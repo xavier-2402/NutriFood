@@ -3,7 +3,7 @@ using NutriFood.Application.Common;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
-using NutriFood.Domain.Entities;
+using NutriFood.Domain.Common.Pagination;
 using NutriFood.Domain.Repositories;
 
 namespace NutriFood.Application.Services.Implementations;
@@ -82,4 +82,22 @@ public sealed class PatientService : IPatientService
 
     public Task<bool> DeleteAsync(int id, short modifiedBy, CancellationToken cancellationToken)
         => _repository.SoftDeleteAsync(id, modifiedBy, cancellationToken);
+
+    public async Task<PageResult<PatientResponse>> SearchAsync(
+        PatientSearchRequest request,
+        short userId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var pagination = new Pagination(page, pageSize);
+        var filter = PatientFilterMapper.ToFilter(request, userId);
+        var result = await _repository.SearchAsync(filter, pagination, cancellationToken);
+
+        return new PageResult<PatientResponse>(
+            result.Items.Select(PatientMapper.Map).ToList(),
+            result.Page,
+            result.PageSize,
+            result.TotalItems);
+    }
 }

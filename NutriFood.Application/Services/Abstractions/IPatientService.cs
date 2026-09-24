@@ -1,4 +1,5 @@
 using NutriFood.Application.Contracts;
+using NutriFood.Domain.Common.Pagination;
 
 namespace NutriFood.Application.Services.Abstractions;
 
@@ -12,4 +13,10 @@ public interface IPatientService
     Task<PatientResponse> CreateAsync(PatientCreateRequest request, CancellationToken cancellationToken);
     Task<PatientResponse?> UpdateAsync(int id, PatientUpdateRequest request, CancellationToken cancellationToken);
     Task<bool> DeleteAsync(int id, short modifiedBy, CancellationToken cancellationToken);
+    Task<PageResult<PatientResponse>> SearchAsync(
+        PatientSearchRequest request,
+        short userId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken);
 }
