@@ -1,7 +1,8 @@
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
-using NutriFood.Domain.Entities;
+using NutriFood.Domain.Common.Pagination;
+using NutriFood.Domain.Filters;
 using NutriFood.Domain.Repositories;
 
 namespace NutriFood.Application.Services.Implementations;
@@ -68,6 +69,26 @@ public sealed class FoodService : IFoodService
 
     public Task<bool> DeleteAsync(int id, short modifiedBy, CancellationToken cancellationToken)
         => _repository.SoftDeleteAsync(id, modifiedBy, cancellationToken);
+
+    public async Task<PageResult<FoodResponse>> SearchAsync(
+        FoodSearchRequest request,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        Pagination pagination = new(page, pageSize);
+        FoodFilter filter = FoodFilterMapper.ToFilter(request);
+        var result = await _repository.SearchAsync(
+            filter,
+            pagination,
+            cancellationToken);
+
+        return new PageResult<FoodResponse>(
+            [.. result.Items.Select(FoodMapper.Map)],
+            result.Page,
+            result.PageSize,
+            result.TotalItems);
+    }
 
     public List<FoodResponse> GetByCategory(short categoryId)
     {

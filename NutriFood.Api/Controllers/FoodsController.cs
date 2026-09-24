@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Services.Abstractions;
+using NutriFood.Domain.Common.Pagination;
 
 namespace NutriFood.Api.Controllers;
 
@@ -17,11 +18,27 @@ public sealed class FoodsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken ct)
-        => Ok(await _service.GetAllAsync(ct));
+    {
+        return Ok(await _service.GetAllAsync(ct));
+    }
 
-    [HttpGet("active")]
+    [HttpGet]
+    [Route("active")]
     public async Task<IActionResult> GetAllActive(CancellationToken ct)
-        => Ok(await _service.GetAllActiveAsync(ct));
+    {
+        return Ok(await _service.GetAllActiveAsync(ct));
+    }
+
+    [HttpPost]
+    [Route("seach")]
+    public async Task<IActionResult> Search(
+        [FromBody] FoodSearchRequest request,
+        [FromQuery] int page = Pagination.DefaultPage,
+        [FromQuery] int size = Pagination.DefaultPageSize,
+        CancellationToken ct = default)
+    {
+        return Ok(await _service.SearchAsync(request, page, size, ct));
+    }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id, CancellationToken ct)
@@ -37,11 +54,13 @@ public sealed class FoodsController : ControllerBase
         return response is null ? NotFound() : Ok(response);
     }
 
-    [HttpGet("category/{categoryId}")]
+    [HttpGet]
+    [Route("category/{categoryId}")]
     public IActionResult GetByCategory(short categoryId)
         => Ok(_service.GetByCategory(categoryId));
 
-    [HttpGet("classification/{classificationId}")]
+    [HttpGet]
+    [Route("classification/{classificationId}")]
     public IActionResult GetByClassification(short classificationId)
         => Ok(_service.GetByClassification(classificationId));
 

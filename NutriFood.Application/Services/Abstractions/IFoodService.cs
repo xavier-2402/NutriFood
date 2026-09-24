@@ -1,4 +1,5 @@
 using NutriFood.Application.Contracts;
+using NutriFood.Domain.Common.Pagination;
 
 namespace NutriFood.Application.Services.Abstractions;
 
@@ -12,6 +13,11 @@ public interface IFoodService
     Task<FoodResponse> CreateAsync(FoodCreateRequest request, CancellationToken cancellationToken);
     Task<FoodResponse?> UpdateAsync(int id, FoodUpdateRequest request, CancellationToken cancellationToken);
     Task<bool> DeleteAsync(int id, short modifiedBy, CancellationToken cancellationToken);
+    Task<PageResult<FoodResponse>> SearchAsync(
+        FoodSearchRequest request,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken);
     List<FoodResponse> GetByCategory(short categoryId);
     List<FoodResponse> GetByClassification(short classificationId);
 }
