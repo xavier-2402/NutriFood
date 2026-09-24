@@ -17,12 +17,10 @@ public static class PatientMapper
 
     public static Patient ToEntity(PatientCreateRequest request) => new()
     {
-        Code = request.Code,
-        IdCard = request.IdCard,
-        FirstName = request.FirstName,
-        LastName = request.LastName,
+        IdCard = request.IdCard?.Trim(),
+        FirstName = request.FirstName.Trim(),
+        LastName = request.LastName.Trim(),
         DateOfBirth = request.DateOfBirth,
-        UserId = request.UserId,
         Active = true
     };
 

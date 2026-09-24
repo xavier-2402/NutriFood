@@ -15,7 +15,7 @@ namespace NutriFood.Domain.Entities
 
         public short FoodCategoryId { get; set; }
 
-        public short FoodClassificationId { get; set; }
+        public short? FoodClassificationId { get; set; }
 
         public string? ImageUrl { get; set; }
 

@@ -1,8 +1,10 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using NutriFood.Api.Filters;
 using NutriFood.Api.Middleware;
 using NutriFood.Application.Services.Abstractions;
 using NutriFood.Application.Services.Implementations;
+using NutriFood.Application.Validators;
 using NutriFood.Domain.Repositories;
 using NutriFood.Infrastructure.Persistence.Context;
 using NutriFood.Infrastructure.Persistence.Repositories;
@@ -14,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options => options.Filters.Add<ResponseResultFilter>());
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddValidatorsFromAssemblyContaining<PatientCreateRequestValidator>();
 
 builder.Services.AddDbContext<NutriFoodDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("NutriFoodDb")));
@@ -31,8 +35,6 @@ builder.Services.AddScoped<IRecipeFoodAttributeValueRepository, RecipeFoodAttrib
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped(typeof(ICrudRepository<,>), typeof(EfCrudRepository<,>));
-builder.Services.AddScoped(typeof(IReadOnlyService<,>), typeof(ReadOnlyService<,>));
-builder.Services.AddScoped(typeof(ICrudService<,>), typeof(CrudService<,>));
 
 builder.Services.AddScoped<IAdequacyAttributeValueService, AdequacyAttributeValueService>();
 builder.Services.AddScoped<IAdequacyPercentageService, AdequacyPercentageService>();
@@ -44,6 +46,13 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IRecipeFoodService, RecipeFoodService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IMeasureUnitService, MeasureUnitService>();
+builder.Services.AddScoped<IMealTimeService, MealTimeService>();
+builder.Services.AddScoped<IFoodClassificationService, FoodClassificationService>();
+builder.Services.AddScoped<IFoodCategoryService, FoodCategoryService>();
+builder.Services.AddScoped<IFoodAttributeService, FoodAttributeService>();
 
 builder.Services.AddOpenApi();
 

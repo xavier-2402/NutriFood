@@ -8,10 +8,10 @@ namespace NutriFood.Domain.Common.Base
 
         public DateTime CreaDate { get; set; }
 
-        public short CreaUsr { get; set; }
+        public short? CreaUsr { get; set; }
 
         public DateTime ModDate { get; set; }
 
-        public short ModUsr { get; set; }
+        public short? ModUsr { get; set; }
     }
 }
