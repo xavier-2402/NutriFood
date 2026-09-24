@@ -5,11 +5,11 @@ namespace NutriFood.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public sealed class MealTimesController : ControllerBase
+public sealed class MealTimeController : ControllerBase
 {
     private readonly IMealTimeService _service;
 
-    public MealTimesController(IMealTimeService service)
+    public MealTimeController(IMealTimeService service)
     {
         _service = service;
     }

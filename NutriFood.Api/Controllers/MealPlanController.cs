@@ -6,11 +6,11 @@ namespace NutriFood.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public sealed class UsersController : ControllerBase
+public sealed class MealPlanController : ControllerBase
 {
-    private readonly IUserService _service;
+    private readonly IMealPlanService _service;
 
-    public UsersController(IUserService service)
+    public MealPlanController(IMealPlanService service)
     {
         _service = service;
     }
@@ -24,7 +24,7 @@ public sealed class UsersController : ControllerBase
         => Ok(await _service.GetAllActiveAsync(ct));
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(short id, CancellationToken ct)
+    public async Task<IActionResult> GetById(int id, CancellationToken ct)
     {
         var response = await _service.GetByIdAsync(id, false, ct);
         return response is null ? NotFound() : Ok(response);
@@ -38,17 +38,17 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(UserCreateRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create(MealPlanCreateRequest request, CancellationToken ct)
         => StatusCode(StatusCodes.Status201Created, await _service.CreateAsync(request, ct));
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(short id, UserUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, MealPlanUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
     {
         var updated = await _service.UpdateAsync(id, request, ct);
         return updated is null ? NotFound() : Ok(updated);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(short id, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+    public async Task<IActionResult> Delete(int id, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
         => await _service.DeleteAsync(id, userId, ct) ? NoContent() : NotFound();
 }

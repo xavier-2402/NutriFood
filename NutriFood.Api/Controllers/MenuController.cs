@@ -5,11 +5,11 @@ namespace NutriFood.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public sealed class MeasureUnitsController : ControllerBase
+public sealed class MenuController : ControllerBase
 {
-    private readonly IMeasureUnitService _service;
+    private readonly IMenuService _service;
 
-    public MeasureUnitsController(IMeasureUnitService service)
+    public MenuController(IMenuService service)
     {
         _service = service;
     }

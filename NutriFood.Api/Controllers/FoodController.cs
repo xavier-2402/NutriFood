@@ -1,27 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Services.Abstractions;
+using NutriFood.Domain.Common.Pagination;
 
 namespace NutriFood.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public sealed class RecipesController : ControllerBase
+public sealed class FoodController : ControllerBase
 {
-    private readonly IRecipeService _service;
+    private readonly IFoodService _service;
 
-    public RecipesController(IRecipeService service)
+    public FoodController(IFoodService service)
     {
         _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken ct)
-        => Ok(await _service.GetAllAsync(ct));
+    {
+        return Ok(await _service.GetAllAsync(ct));
+    }
 
-    [HttpGet("active")]
+    [HttpGet]
+    [Route("active")]
     public async Task<IActionResult> GetAllActive(CancellationToken ct)
-        => Ok(await _service.GetAllActiveAsync(ct));
+    {
+        return Ok(await _service.GetAllActiveAsync(ct));
+    }
+
+    [HttpPost]
+    [Route("seach")]
+    public async Task<IActionResult> Search(
+        [FromBody] FoodSearchRequest request,
+        [FromQuery] int page = Pagination.DefaultPage,
+        [FromQuery] int size = Pagination.DefaultPageSize,
+        CancellationToken ct = default)
+    {
+        return Ok(await _service.SearchAsync(request, page, size, ct));
+    }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id, CancellationToken ct)
@@ -37,12 +54,22 @@ public sealed class RecipesController : ControllerBase
         return response is null ? NotFound() : Ok(response);
     }
 
+    [HttpGet]
+    [Route("category/{categoryId}")]
+    public IActionResult GetByCategory(short categoryId)
+        => Ok(_service.GetByCategory(categoryId));
+
+    [HttpGet]
+    [Route("classification/{classificationId}")]
+    public IActionResult GetByClassification(short classificationId)
+        => Ok(_service.GetByClassification(classificationId));
+
     [HttpPost]
-    public async Task<IActionResult> Create(RecipeCreateRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create(FoodCreateRequest request, CancellationToken ct)
         => StatusCode(StatusCodes.Status201Created, await _service.CreateAsync(request, ct));
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, RecipeUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, FoodUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
     {
         var updated = await _service.UpdateAsync(id, request, ct);
         return updated is null ? NotFound() : Ok(updated);

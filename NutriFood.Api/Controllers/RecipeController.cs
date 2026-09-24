@@ -6,11 +6,11 @@ namespace NutriFood.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public sealed class FoodMenusController : ControllerBase
+public sealed class RecipeController : ControllerBase
 {
-    private readonly IFoodMenuService _service;
+    private readonly IRecipeService _service;
 
-    public FoodMenusController(IFoodMenuService service)
+    public RecipeController(IRecipeService service)
     {
         _service = service;
     }
@@ -38,11 +38,11 @@ public sealed class FoodMenusController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(FoodMenuCreateRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create(RecipeCreateRequest request, CancellationToken ct)
         => StatusCode(StatusCodes.Status201Created, await _service.CreateAsync(request, ct));
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, FoodMenuUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
+    public async Task<IActionResult> Update(int id, RecipeUpdateRequest request, [FromQuery(Name = "user_id")] short userId, CancellationToken ct)
     {
         var updated = await _service.UpdateAsync(id, request, ct);
         return updated is null ? NotFound() : Ok(updated);
