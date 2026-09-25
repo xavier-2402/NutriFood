@@ -15,9 +15,8 @@ public static class MealPlanMapper
 
     public static MealPlan ToEntity(MealPlanCreateRequest request) => new()
     {
-        Code = request.Code,
-        Name = request.Name,
-        Description = request.Description,
+        Name = request.Name.Trim(),
+        Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
         AdequacyPercentageId = request.AdequacyPercentageId,
         Active = true
     };

@@ -58,7 +58,7 @@ public sealed class PatientService : IPatientService
         }
 
         var entity = PatientMapper.ToEntity(request);
-        entity.Code = CodeGenerator.Generate();
+        entity.Code = CodeGenerator.Generate(20);
         entity.CreaUsr = 1;
         entity.ModUsr = 1;
         entity.UserId = 1;
