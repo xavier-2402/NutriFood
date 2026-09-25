@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using FluentValidation;
 using NutriFood.Api.Contracts;
+using NutriFood.Application.Common.Exceptions;
 
 namespace NutriFood.Api.Middleware;
 
@@ -22,6 +23,12 @@ public sealed class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
+        catch (NotFoundException exception)
+        {
+            _logger.LogWarning(exception, "A requested resource was not found.");
+
+            await HandleNotFoundExceptionAsync(context, exception);
+        }
         catch (ValidationException exception)
         {
             _logger.LogWarning(exception, "A validation error occurred while processing the request.");
@@ -41,6 +48,17 @@ public sealed class ExceptionHandlingMiddleware
         var statusCode = (int)HttpStatusCode.BadRequest;
         var message = string.Join(" ", exception.Errors.Select(e => e.ErrorMessage));
         var response = ResponseResult<object?>.Failure(statusCode, message);
+
+        context.Response.StatusCode = statusCode;
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+    }
+
+    private static async Task HandleNotFoundExceptionAsync(HttpContext context, NotFoundException exception)
+    {
+        var statusCode = (int)HttpStatusCode.NotFound;
+        var response = ResponseResult<object?>.Failure(statusCode, exception.Message);
 
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
