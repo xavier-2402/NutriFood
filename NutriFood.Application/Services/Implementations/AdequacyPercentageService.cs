@@ -1,3 +1,6 @@
+using FluentValidation;
+using NutriFood.Application.Common;
+using NutriFood.Application.Common.Exceptions;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
@@ -6,7 +9,10 @@ using NutriFood.Domain.Repositories;
 
 namespace NutriFood.Application.Services.Implementations;
 
-public sealed class AdequacyPercentageService(IAdequacyPercentageRepository repository) : IAdequacyPercentageService
+public sealed class AdequacyPercentageService(
+    IAdequacyPercentageRepository repository,
+    IPatientRepository patientRepository,
+    IValidator<AdequacyPercentageCreateRequest> createValidator) : IAdequacyPercentageService
 {
     public async Task<AdequacyPercentageResponse?> GetByIdAsync(int id, bool includeInactive, CancellationToken cancellationToken)
     {
@@ -40,7 +46,27 @@ public sealed class AdequacyPercentageService(IAdequacyPercentageRepository repo
 
     public async Task<AdequacyPercentageResponse> CreateAsync(AdequacyPercentageCreateRequest request, CancellationToken cancellationToken)
     {
+        var validationResult = await createValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        const short userId = 1;
+        var patient = await patientRepository.GetByIdAndUserIdAsync(request.PatientId, userId, cancellationToken)
+            ?? throw new NotFoundException(ErrorMessages.PatientNotFound);
+
         var entity = AdequacyPercentageMapper.ToEntity(request);
+        entity.Code = CodeGenerator.Generate();
+        entity.CreaUsr = userId;
+        entity.ModUsr = userId;
+
+        foreach (var attributeValue in entity.AdequacyAttributeValues)
+        {
+            attributeValue.CreaUsr = userId;
+            attributeValue.ModUsr = userId;
+        }
+
         var created = await repository.AddAsync(entity, cancellationToken);
         return AdequacyPercentageMapper.Map(created);
     }

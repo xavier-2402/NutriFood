@@ -15,11 +15,16 @@ public static class AdequacyPercentageMapper
 
     public static AdequacyPercentage ToEntity(AdequacyPercentageCreateRequest request) => new()
     {
-        Code = request.Code,
-        Title = request.Title,
-        Description = request.Description,
+        Title = request.Title.Trim(),
+        Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
         PatientId = request.PatientId,
-        Active = true
+        Active = true,
+        AdequacyAttributeValues = request.AttributeValues.Select(value => new AdequacyAttributeValue
+        {
+            AttributeId = value.AttributeId,
+            Percentage = value.Percentage,
+            Active = true
+        }).ToList()
     };
 
     public static AdequacyPercentage ToEntity(AdequacyPercentageUpdateRequest request, AdequacyPercentage existing) => new()

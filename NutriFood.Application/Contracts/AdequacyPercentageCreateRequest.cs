@@ -1,7 +1,12 @@
 namespace NutriFood.Application.Contracts;
 
-public sealed record AdequacyPercentageCreateRequest(
-    string Code,
-    string Title,
-    string? Description,
-    int PatientId);
+public sealed class AdequacyPercentageCreateRequest
+{
+    public string Title { get; init; } = string.Empty;
+
+    public string? Description { get; init; }
+
+    public int PatientId { get; init; }
+
+    public List<AdequacyAttributeValueCreateRequest> AttributeValues { get; init; } = [];
+}
