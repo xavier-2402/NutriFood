@@ -1,3 +1,6 @@
+using FluentValidation;
+using NutriFood.Application.Common;
+using NutriFood.Application.Common.Exceptions;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
@@ -9,10 +12,17 @@ namespace NutriFood.Application.Services.Implementations;
 public sealed class RecipeService : IRecipeService
 {
     private readonly IRecipeRepository _repository;
+    private readonly IFoodMenuRepository _foodMenuRepository;
+    private readonly IValidator<RecipeCreateRequest> _createValidator;
 
-    public RecipeService(IRecipeRepository repository)
+    public RecipeService(
+        IRecipeRepository repository,
+        IFoodMenuRepository foodMenuRepository,
+        IValidator<RecipeCreateRequest> createValidator)
     {
         _repository = repository;
+        _foodMenuRepository = foodMenuRepository;
+        _createValidator = createValidator;
     }
 
     public async Task<RecipeResponse?> GetByIdAsync(int id, bool includeInactive, CancellationToken cancellationToken)
@@ -47,7 +57,20 @@ public sealed class RecipeService : IRecipeService
 
     public async Task<RecipeResponse> CreateAsync(RecipeCreateRequest request, CancellationToken cancellationToken)
     {
-        var entity = RecipeMapper.ToEntity(request);
+        var validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        const short userId = 1;
+        _ = await _foodMenuRepository.GetByIdAndUserIdAsync(request.FoodMenuId, userId, cancellationToken)
+            ?? throw new NotFoundException(ErrorMessages.FoodMenuNotFound);
+
+        Recipe entity = RecipeMapper.ToEntity(request);
+        entity.Code = CodeGenerator.Generate();
+        entity.SetInitialData(userId);
+
         var created = await _repository.AddAsync(entity, cancellationToken);
         return RecipeMapper.Map(created);
     }

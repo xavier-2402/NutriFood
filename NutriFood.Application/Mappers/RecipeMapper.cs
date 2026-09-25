@@ -15,9 +15,8 @@ public static class RecipeMapper
 
     public static Recipe ToEntity(RecipeCreateRequest request) => new()
     {
-        Code = request.Code,
-        Name = request.Name,
-        Description = request.Description,
+        Name = request.Name.Trim(),
+        Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
         FoodMenuId = request.FoodMenuId,
         Active = true
     };

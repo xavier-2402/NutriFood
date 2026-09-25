@@ -18,5 +18,11 @@ namespace NutriFood.Domain.Entities
         public FoodMenu? FoodMenu { get; set; }
 
         public List<RecipeFood> RecipeFoods { get; set; } = [];
+
+        public void SetInitialData(short userId)
+        {
+            CreaUsr = userId;
+            ModUsr = userId;
+        }
     }
 }
