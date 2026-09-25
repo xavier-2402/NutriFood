@@ -16,9 +16,8 @@ public static class FoodMenuMapper
 
     public static FoodMenu ToEntity(FoodMenuCreateRequest request) => new()
     {
-        Code = request.Code,
-        Name = request.Name,
-        Description = request.Description,
+        Name = request.Name.Trim(),
+        Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
         MealPlanId = request.MealPlanId,
         MealTimeId = request.MealTimeId,
         Active = true

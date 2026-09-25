@@ -1,3 +1,6 @@
+using FluentValidation;
+using NutriFood.Application.Common;
+using NutriFood.Application.Common.Exceptions;
 using NutriFood.Application.Contracts;
 using NutriFood.Application.Mappers;
 using NutriFood.Application.Services.Abstractions;
@@ -9,10 +12,20 @@ namespace NutriFood.Application.Services.Implementations;
 public sealed class FoodMenuService : IFoodMenuService
 {
     private readonly IFoodMenuRepository _repository;
+    private readonly IMealPlanRepository _mealPlanRepository;
+    private readonly ICrudRepository<MealTime, short> _mealTimeRepository;
+    private readonly IValidator<FoodMenuCreateRequest> _createValidator;
 
-    public FoodMenuService(IFoodMenuRepository repository)
+    public FoodMenuService(
+        IFoodMenuRepository repository,
+        IMealPlanRepository mealPlanRepository,
+        ICrudRepository<MealTime, short> mealTimeRepository,
+        IValidator<FoodMenuCreateRequest> createValidator)
     {
         _repository = repository;
+        _mealPlanRepository = mealPlanRepository;
+        _mealTimeRepository = mealTimeRepository;
+        _createValidator = createValidator;
     }
 
     public async Task<FoodMenuResponse?> GetByIdAsync(int id, bool includeInactive, CancellationToken cancellationToken)
@@ -47,7 +60,25 @@ public sealed class FoodMenuService : IFoodMenuService
 
     public async Task<FoodMenuResponse> CreateAsync(FoodMenuCreateRequest request, CancellationToken cancellationToken)
     {
-        var entity = FoodMenuMapper.ToEntity(request);
+        var validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
+        const short userId = 1;
+        _ = await _mealPlanRepository.GetByIdAndUserIdAsync(request.MealPlanId, userId, cancellationToken)
+            ?? throw new NotFoundException(ErrorMessages.MealPlanNotFound);
+
+        if (request.MealTimeId.HasValue)
+        {
+            _ = await _mealTimeRepository.GetByIdAsync(request.MealTimeId.Value,false, cancellationToken)
+                ?? throw new NotFoundException(ErrorMessages.MealTimeNotFound);
+        }
+
+        FoodMenu entity = FoodMenuMapper.ToEntity(request);
+        entity.Code = CodeGenerator.Generate(20);
+        entity.SetInitialData(userId);
         var created = await _repository.AddAsync(entity, cancellationToken);
         return FoodMenuMapper.Map(created);
     }

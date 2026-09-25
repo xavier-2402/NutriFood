@@ -22,5 +22,11 @@ namespace NutriFood.Domain.Entities
         public MealTime? MealTime { get; set; }
 
         public List<Recipe> Recipes { get; set; } = [];
+
+        public void SetInitialData(short userId)
+        {
+            CreaUsr = userId;
+            ModUsr = userId;
+        }
     }
 }
