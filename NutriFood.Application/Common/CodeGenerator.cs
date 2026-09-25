@@ -2,9 +2,10 @@
 {
     public static class CodeGenerator
     {
-        public static string Generate()
+        public static string Generate(int size = 15)
         {
-            return Guid.NewGuid().ToString("n")[..15].ToString();
+            size = size <= 0 ? 15 : size;
+            return Guid.NewGuid().ToString("n")[..size].ToString();
         }
     }
 }
