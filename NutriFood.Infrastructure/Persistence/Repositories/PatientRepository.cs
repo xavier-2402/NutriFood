@@ -9,6 +9,17 @@ namespace NutriFood.Infrastructure.Persistence.Repositories;
 
 public sealed class PatientRepository(NutriFoodDbContext context) : EfCrudRepository<Patient, int>(context), IPatientRepository
 {
+    public Task<Patient?> GetByIdAndUserIdAsync(int patientId, short userId, CancellationToken cancellationToken)
+    {
+        return Context.Patients
+            .AsNoTracking()
+            .FirstOrDefaultAsync(patient =>
+                patient.Id == patientId &&
+                patient.UserId == userId &&
+                patient.Active,
+                cancellationToken);
+    }
+
     public async Task<PageResult<Patient>> SearchAsync(
         PatientFilter filter,
         Pagination pagination,
