@@ -23,6 +23,15 @@ public sealed class FoodRepository(NutriFoodDbContext context) : EfCrudRepositor
             .Where(x => x.Active && x.FoodClassificationId != null && x.FoodClassificationId == clasificationId)];
     }
 
+    public Task<Food?> GetActiveWithAttributeValuesAsync(int foodId, CancellationToken cancellationToken)
+    {
+        return Context.Foods
+            .AsNoTracking()
+            .Include(food => food.FoodAttributeValues)
+            .ThenInclude(attributeValue => attributeValue.Attribute)
+            .FirstOrDefaultAsync(food => food.Id == foodId && food.Active, cancellationToken);
+    }
+
     public async Task<PageResult<Food>> SearchAsync(
         FoodFilter filter,
         Pagination pagination,

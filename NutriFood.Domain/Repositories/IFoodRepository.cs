@@ -6,6 +6,7 @@ public interface IFoodRepository : ICrudRepository<Food, int>
 {
     public List<Food> FindByCategory(short categoryId);
     public List<Food> FindByClasification(short clasificationId);
+    Task<Food?> GetActiveWithAttributeValuesAsync(int foodId, CancellationToken cancellationToken);
     Task<PageResult<Food>> SearchAsync(
         FoodFilter filter,
         Pagination pagination,
