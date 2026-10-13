@@ -18,9 +18,11 @@ public class EfCrudRepository<TEntity, TId> : ICrudRepository<TEntity, TId>
     }
 
 
+    protected virtual IQueryable<TEntity> ApplyIncludes(IQueryable<TEntity> query) => query;
+
     public async Task<TEntity?> GetByIdAsync(TId id, bool includeInactive, CancellationToken cancellationToken)
     {
-        var entity = await _set.AsNoTracking().FirstOrDefaultAsync(e => e.Id!.Equals(id), cancellationToken);
+        var entity = await ApplyIncludes(_set.AsNoTracking()).FirstOrDefaultAsync(e => e.Id!.Equals(id), cancellationToken);
 
         if (entity is null || (!includeInactive && !entity.Active))
         {
@@ -33,27 +35,27 @@ public class EfCrudRepository<TEntity, TId> : ICrudRepository<TEntity, TId>
 
     public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var query = _set.AsNoTracking();
+        var query = ApplyIncludes(_set.AsNoTracking());
         return await query
             .ToListAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<TEntity>> GetAllActiveAsync(CancellationToken cancellationToken)
     {
-        var query = _set.AsNoTracking().Where(entity => entity.Active);
+        var query = ApplyIncludes(_set.AsNoTracking().Where(entity => entity.Active));
         return await query.ToListAsync(cancellationToken);
     }
 
     public async Task<TEntity?> GetByCodeAsync(string code, CancellationToken cancellationToken)
     {
-        var query = _set.AsNoTracking().Where(entity => entity.Code == code);
+        var query = ApplyIncludes(_set.AsNoTracking().Where(entity => entity.Code == code));
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
 
 
     public async Task<TEntity?> GetActiveByCodeAsync(string code, CancellationToken cancellationToken)
     {
-        var query = _set.AsNoTracking().Where(entity => entity.Code == code && entity.Active);
+        var query = ApplyIncludes(_set.AsNoTracking().Where(entity => entity.Code == code && entity.Active));
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
 

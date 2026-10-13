@@ -8,4 +8,5 @@ public sealed record FoodResponse(
     short FoodCategoryId,
     short? FoodClassificationId,
     string? ImageUrl,
-    bool Active);
+    bool Active,
+    IReadOnlyList<FoodAttributeValueResponse> Attributes);

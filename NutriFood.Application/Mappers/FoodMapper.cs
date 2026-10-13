@@ -13,7 +13,14 @@ public static class FoodMapper
         entity.FoodCategoryId,
         entity.FoodClassificationId,
         entity.ImageUrl,
-        entity.Active);
+        entity.Active,
+        [.. entity.FoodAttributeValues
+            .Where(attributeValue => attributeValue.Active && attributeValue.Attribute?.Active == true)
+            .Select(attributeValue => new FoodAttributeValueResponse(
+                attributeValue.Attribute!.Name,
+                attributeValue.Value,
+                attributeValue.Attribute.MeasureUnit?.Name,
+                attributeValue.Attribute.MeasureUnit?.Abbreviation))]);
 
     public static Food ToEntity(FoodCreateRequest request) => new()
     {

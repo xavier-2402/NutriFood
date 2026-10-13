@@ -9,26 +9,30 @@ namespace NutriFood.Infrastructure.Persistence.Repositories;
 
 public sealed class FoodRepository(NutriFoodDbContext context) : EfCrudRepository<Food, int>(context), IFoodRepository
 {
+    protected override IQueryable<Food> ApplyIncludes(IQueryable<Food> query)
+        => query
+            .Include(food => food.FoodAttributeValues)
+                .ThenInclude(attributeValue => attributeValue.Attribute)
+                    .ThenInclude(attribute => attribute.MeasureUnit);
+
     public List<Food> FindByCategory(short categoryId)
     {
-        return [.. Context.Foods
+        return [.. ApplyIncludes(Context.Foods
             .AsNoTracking()
-            .Where(x => x.Active && x.FoodCategoryId == categoryId)];
+            .Where(x => x.Active && x.FoodCategoryId == categoryId))];
     }
 
     public List<Food> FindByClasification(short clasificationId)
     {
-        return [.. Context.Foods
+        return [.. ApplyIncludes(Context.Foods
             .AsNoTracking()
-            .Where(x => x.Active && x.FoodClassificationId != null && x.FoodClassificationId == clasificationId)];
+            .Where(x => x.Active && x.FoodClassificationId != null && x.FoodClassificationId == clasificationId))];
     }
 
     public Task<Food?> GetActiveWithAttributeValuesAsync(int foodId, CancellationToken cancellationToken)
     {
-        return Context.Foods
-            .AsNoTracking()
-            .Include(food => food.FoodAttributeValues)
-            .ThenInclude(attributeValue => attributeValue.Attribute)
+        return ApplyIncludes(Context.Foods
+            .AsNoTracking())
             .FirstOrDefaultAsync(food => food.Id == foodId && food.Active, cancellationToken);
     }
 
@@ -52,8 +56,8 @@ public sealed class FoodRepository(NutriFoodDbContext context) : EfCrudRepositor
 
     private IQueryable<Food> BuildSearchQuery(FoodFilter filter)
     {
-        IQueryable<Food> query = Context.Foods
-            .AsNoTracking()
+        IQueryable<Food> query = ApplyIncludes(Context.Foods
+            .AsNoTracking())
             .Where(food => food.Active);
 
         var normalizedSearch = filter.Search?.Trim();
