@@ -9,6 +9,8 @@ public static class FoodFilterMapper
     {
         Search = request.Search,
         CategoryIds = request.CategoryIds,
-        ClassificationIds = request.ClassificationIds
+        ClassificationIds = request.ClassificationIds,
+        AttributeFilters = request.AttributeFilters,
+        Sort = request.Sort
     };
 }

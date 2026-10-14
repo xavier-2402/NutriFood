@@ -11,7 +11,9 @@ public static class FoodMapper
         entity.Name,
         entity.Description,
         entity.FoodCategoryId,
+        entity.FoodCategory?.Name,
         entity.FoodClassificationId,
+        entity.FoodClassification?.Name,
         entity.ImageUrl,
         entity.Active,
         [.. entity.FoodAttributeValues
