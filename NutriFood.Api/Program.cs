@@ -22,8 +22,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddValidatorsFromAssemblyContaining<PatientCreateRequestValidator>();
 
+var connectionString = builder.Configuration.GetConnectionString("NutriFoodDb")
+    ?? builder.Configuration["ConnectionStrings__NutriFoodDb"]
+    ?? builder.Configuration["NUTRIFOOD_CONNECTION_STRING"]
+    ?? builder.Configuration["DATABASE_URL"];
+
 builder.Services.AddDbContext<NutriFoodDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("NutriFoodDb")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IAdequacyAttributeValueRepository, AdequacyAttributeValueRepository>();
 builder.Services.AddScoped<IAdequacyPercentageRepository, AdequacyPercentageRepository>();
@@ -59,6 +64,24 @@ builder.Services.AddScoped<IFoodAttributeService, FoodAttributeService>();
 
 builder.Services.AddOpenApi();
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? builder.Configuration["Cors__AllowedOrigins"]?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    ?? builder.Configuration["ALLOWED_ORIGINS"]?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+if (allowedOrigins is null || allowedOrigins.Length == 0)
+{
+    allowedOrigins = ["http://localhost:4200"];
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+        policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -72,6 +95,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseCors("FrontendPolicy");
 
 app.UseAuthorization();
 
