@@ -22,10 +22,35 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddValidatorsFromAssemblyContaining<PatientCreateRequestValidator>();
 
-var connectionString = builder.Configuration.GetConnectionString("NutriFoodDb")
-    ?? builder.Configuration["ConnectionStrings__NutriFoodDb"]
-    ?? builder.Configuration["NUTRIFOOD_CONNECTION_STRING"]
-    ?? builder.Configuration["DATABASE_URL"];
+string? GetConnectionString(IConfiguration configuration)
+{
+    var connectionString = configuration.GetConnectionString("NutriFoodDb");
+    if (!string.IsNullOrWhiteSpace(connectionString))
+        return connectionString;
+
+    connectionString = configuration["ConnectionStrings:NutriFoodDb"];
+    if (!string.IsNullOrWhiteSpace(connectionString))
+        return connectionString;
+
+    connectionString = configuration["ConnectionStrings__NutriFoodDb"];
+    if (!string.IsNullOrWhiteSpace(connectionString))
+        return connectionString;
+
+    connectionString = configuration["NUTRIFOOD_CONNECTION_STRING"];
+    if (!string.IsNullOrWhiteSpace(connectionString))
+        return connectionString;
+
+    connectionString = configuration["DATABASE_URL"];
+    if (!string.IsNullOrWhiteSpace(connectionString))
+        return connectionString;
+
+    return null;
+}
+
+var connectionString = GetConnectionString(builder.Configuration);
+
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("No se encontró la cadena de conexión. Configura ConnectionStrings__NutriFoodDb, NUTRIFOOD_CONNECTION_STRING o DATABASE_URL.");
 
 builder.Services.AddDbContext<NutriFoodDbContext>(options =>
     options.UseNpgsql(connectionString));
